@@ -22,7 +22,7 @@ jobs:
           export TAG_TIMESTAMP=$(date +'%Y-%m-%d-%H%M%S')
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git fetch --tags
+          git fetch --tags https://x-access-token:${GITHUB_TOKEN}@github.com/weirdion/etsy-python-sdk.git
           git tag -a $TAG_TIMESTAMP -m "Generated SDK on $TAG_TIMESTAMP"
           git tag -a -f $TAG_DATE -m "Generated SDK on $TAG_DATE"
           git push https://x-access-token:${GITHUB_TOKEN}@github.com/weirdion/etsy-python-sdk.git $TAG_TIMESTAMP
