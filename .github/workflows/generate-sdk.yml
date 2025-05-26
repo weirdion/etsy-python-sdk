@@ -56,17 +56,25 @@ jobs:
         run: |
           if git ls-remote --heads origin $BRANCH_NAME | grep -q $BRANCH_NAME; then
             echo "Creating a PR from $BRANCH_NAME -> main"
-            curl -X POST \
-              -H "Authorization: token GITHUB_TOKEN" \
+            RESPONSE=$(curl -s -o response.json -w "%{http_code}" \
+              -X POST \
+              -H "Authorization: token $GITHUB_TOKEN" \
               -H "Accept: application/vnd.github.v3+json" \
               https://api.github.com/repos/weirdion/etsy-python-sdk/pulls \
               -d '{
-                "title": "chore: regenerate SDK from latest OpenAPI spec ('$TAG_TIMESTAMP')",
-                "head": "'$BRANCH_NAME'",
-                "base": "main",
-                "body": "This PR regenerates the SDK using the latest OpenAPI spec.",
-                "reviewers": ["weirdion"]
-              }'
+              "title": "chore: regenerate SDK from latest OpenAPI spec ('$TAG_TIMESTAMP')",
+              "head": "'$BRANCH_NAME'",
+              "base": "main",
+              "body": "This PR regenerates the SDK using the latest OpenAPI spec."
+            }')
+            if [ "$RESPONSE" -ge 200 ] && [ "$RESPONSE" -lt 300 ]; then
+              echo "Pull request created successfully."
+            else
+              echo "Failed to create pull request. Response code: $RESPONSE"
+              echo "Response body:"
+              cat response.json
+              exit 1
+            fi
           else
             echo "Branch $BRANCH_NAME does not exist, skipping PR creation."
           fi
