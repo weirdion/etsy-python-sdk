@@ -1,0 +1,27 @@
+name: Tag Generated SDK
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  tag-generate-sdk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Ensure full history is fetched for tagging
+
+      - name: On PR merge, tag the generated SDK
+        run: |
+          export TAG_DATE=$(date +'%Y-%m-%d')
+          export TAG_TIMESTAMP=$(date +'%Y-%m-%d-%H%M%S')
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch --tags
+          git tag -a $TAG_TIMESTAMP -m "Generated SDK on $TAG_TIMESTAMP"
+          git tag -a -f $TAG_DATE -m "Generated SDK on $TAG_DATE"
+          git push origin $TAG_TIMESTAMP
+          git push origin -f $TAG_DATE
