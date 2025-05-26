@@ -26,6 +26,9 @@ jobs:
       - name: Install dependencies
         run: make install
 
+      - name: Clean existing SDK
+        run: make clean
+
       - name: Generate SDK
         run: make generate
 
@@ -43,7 +46,7 @@ jobs:
           BRANCH_NAME="chore/regenerate-sdk-$TAG_TIMESTAMP"
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
           git checkout -b $BRANCH_NAME
-          git add src/etsy_python_sdk openapi/etsy-openapi.json
+          git add src/ openapi/etsy-openapi.json
           git commit -m "chore: regenerate SDK from latest OpenAPI spec ($TAG_TIMESTAMP)" && \
           git push https://x-access-token:${GITHUB_TOKEN}@github.com/weirdion/etsy-python-sdk.git $BRANCH_NAME
 
