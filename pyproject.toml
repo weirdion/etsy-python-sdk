@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "etsy-python-sdk"
+version = "1.0.0"
+description = "Generated Python3 SDK for Etsy OpenAPI"
+authors = ["Ankit Patterson <dev@weirdion.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [
+    { include = "etsy_python_sdk", from = "src" }
+]
+
+[tool.poetry.dependencies]
+python = ">=3.9,<4.0"
+
+[tool.poetry.group.dev.dependencies]
+openapi-generator-cli = { version = "^7.13.0", extras = ["jdk4py"] }
+pytest = "^8.3.5"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+include = [
+    "README.md",
+    "LICENSE",
+]
