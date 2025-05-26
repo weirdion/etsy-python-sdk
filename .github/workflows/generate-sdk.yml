@@ -3,6 +3,11 @@ name: Regenerate SDK
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write  # Allow writing to the repository for committing changes
+  pull-requests: write  # Allow writing to pull requests for creating PRs
+  metadata: read  # Allow reading metadata for the repository
+
 jobs:
   generate-sdk:
     runs-on: ubuntu-latest
