@@ -1,0 +1,43 @@
+name: Regenerate SDK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  generate-sdk:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Poetry
+        run: pip install poetry
+
+      - name: Install dependencies
+        run: make install
+
+      - name: Generate SDK
+        run: make generate
+
+      - name: Run tests
+        run: make test
+
+      - name: Commit and push changes
+        run: |
+          export TAG_DATE=$(date +'%Y-%m-%d')
+          export TAG_TIMESTAMP=$(date +'%Y-%m-%d-%H%M%S')
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/etsy_python_sdk openapi/etsy-openapi.json
+          git commit -m "chore: regenerate SDK from latest OpenAPI spec ($TAG_TIMESTAMP)" || echo "No changes to commit"
+          git push
+          git tag $TAG_TIMESTAMP
+          git tag -f $TAG_DATE
+          git push origin $TAG_TIMESTAMP
+          git push origin -f $TAG_DATE

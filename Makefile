@@ -23,7 +23,11 @@ generate: $(OPENAPI_FILE)
 		--skip-validate-spec
 	rm -rf $(SDK_DIR)/.openapi-generator \
 		-f $(SDK_DIR)/.openapi-generator-ignore
+	make clean-readme
 
+# Clean generated readme
+clean-readme:
+	python3 -c "import re; p='src/etsy_python_sdk_README.md'; t=open(p).read(); t=re.sub(r'<div.*?>.*?</div>', '', t, flags=re.DOTALL); open(p, 'w').write(t)"
 
 # Install dependencies using Poetry
 install:
@@ -38,4 +42,4 @@ clean:
 	rm -rf $(SDK_DIR)/etsy_python_sdk/* $(OPENAPI_FILE)
 
 # Phony targets
-.PHONY: all generate clean install test
+.PHONY: all generate clean install test clean-readme
