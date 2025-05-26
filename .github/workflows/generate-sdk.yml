@@ -52,16 +52,21 @@ jobs:
 
       - name: Create Pull Request
         env:
-          # gh cli expects GH_TOKEN to be set for authentication
-          GH_TOKEN: ${{ secrets.ETSY_SDK_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ETSY_SDK_GITHUB_TOKEN }}
         run: |
-          export GH_TOKEN=${{ secrets.ETSY_SDK_GITHUB_TOKEN }}
           if git ls-remote --heads origin $BRANCH_NAME | grep -q $BRANCH_NAME; then
             echo "Creating a PR from $BRANCH_NAME -> main"
-            gh pr create --base main --head $BRANCH_NAME \
-            --title "chore: regenerate SDK from latest OpenAPI spec ($TAG_TIMESTAMP)" \
-            --body "This PR regenerates the SDK using the latest OpenAPI spec." \
-            --reviewer weirdion
+            curl -X POST \
+              -H "Authorization: token GITHUB_TOKEN" \
+              -H "Accept: application/vnd.github.v3+json" \
+              https://api.github.com/repos/weirdion/etsy-python-sdk/pulls \
+              -d '{
+                "title": "chore: regenerate SDK from latest OpenAPI spec ('$TAG_TIMESTAMP')",
+                "head": "'$BRANCH_NAME'",
+                "base": "main",
+                "body": "This PR regenerates the SDK using the latest OpenAPI spec.",
+                "reviewers": ["weirdion"]
+              }'
           else
             echo "Branch $BRANCH_NAME does not exist, skipping PR creation."
           fi
