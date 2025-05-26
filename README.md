@@ -9,6 +9,10 @@ Python 3 SDK for the Etsy Open API, generated using [OpenAPITools/openapi-genera
 
 ## Usage
 
+Docs are available at [Etsy OpenAPI Documentation](https://developers.etsy.com/documentation/reference/).
+
+Generated SDK Docs are available in [src/etsy_python_sdk_README.md](src/etsy_python_sdk_README.md).
+
 Add this SDK as a dependency in your Poetry project:
 
 ```toml

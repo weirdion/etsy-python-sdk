@@ -2,7 +2,7 @@
 OPENAPI_URL=https://www.etsy.com/openapi/generated/oas/3.0.0.json
 OPENAPI_FILE=openapi/etsy-openapi.json
 GENERATOR_CONFIG=generator-config/openapi-generator-config.yaml
-SDK_DIR=src/etsy_python_sdk
+SDK_DIR=src
 
 # Default target
 all: generate
@@ -21,6 +21,9 @@ generate: $(OPENAPI_FILE)
 		-c $(GENERATOR_CONFIG) \
 		-o $(SDK_DIR) \
 		--skip-validate-spec
+	rm -rf $(SDK_DIR)/.openapi-generator \
+		-f $(SDK_DIR)/.openapi-generator-ignore
+
 
 # Install dependencies using Poetry
 install:
@@ -32,7 +35,7 @@ test:
 
 # Clean up generated files
 clean:
-	rm -rf $(SDK_DIR)/* $(OPENAPI_FILE)
+	rm -rf $(SDK_DIR)/etsy_python_sdk/* $(OPENAPI_FILE)
 
 # Phony targets
 .PHONY: all generate clean install test
