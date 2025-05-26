@@ -52,7 +52,8 @@ jobs:
 
       - name: Create Pull Request
         env:
-          GITHUB_TOKEN: ${{ secrets.ETSY_SDK_GITHUB_TOKEN }}
+          # gh cli expects GH_TOKEN to be set for authentication
+          GH_TOKEN: ${{ secrets.ETSY_SDK_GITHUB_TOKEN }}
         run: |
           if git ls-remote --heads origin $BRANCH_NAME | grep -q $BRANCH_NAME; then
             echo "Creating a PR from $BRANCH_NAME -> main"
