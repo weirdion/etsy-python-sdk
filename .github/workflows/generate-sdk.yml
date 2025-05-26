@@ -35,32 +35,25 @@ jobs:
       - name: Run tests
         run: make test
 
-      - name: Commit and push changes
-        id: commit_and_push
-        env:
-          GITHUB_TOKEN: ${{ secrets.ETSY_SDK_GITHUB_TOKEN }}
+      - name: Set environment variables
         run: |
           export TAG_TIMESTAMP=$(date +'%Y-%m-%d-%H%M%S')
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          BRANCH_NAME="chore/regenerate-sdk-$TAG_TIMESTAMP"
-          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
-          git checkout -b $BRANCH_NAME
-          git add src/ openapi/etsy-openapi.json
-          git commit -m "chore: regenerate SDK from latest OpenAPI spec ($TAG_TIMESTAMP)" && \
-          git push https://x-access-token:${GITHUB_TOKEN}@github.com/weirdion/etsy-python-sdk.git $BRANCH_NAME
+          echo "TAG_TIMESTAMP=$TAG_TIMESTAMP" >> $GITHUB_ENV
+          echo "$TAG_TIMESTAMP" > VERSION
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
+        env:
+          GITHUB_TOKEN: ${{ secrets.ETSY_SDK_GITHUB_TOKEN }}
         with:
-          token: ${{ secrets.ETSY_SDK_GITHUB_TOKEN }}
-          title: "chore: regenerate SDK from latest OpenAPI spec ($TAG_TIMESTAMP)"
+          title: "chore: regenerate SDK from latest OpenAPI spec (${{ env.TAG_TIMESTAMP }})"
           body: "This PR regenerates the SDK using the latest OpenAPI spec."
           base: main
-          branch: ${{ env.BRANCH_NAME }}
+          branch: "chore/regenerate-sdk-${{ env.TAG_TIMESTAMP }}"
           add-paths: |
               src/
               openapi/etsy-openapi.json
-          commit-message: "chore: regenerate SDK from latest OpenAPI spec ($TAG_TIMESTAMP)"
+              VERSION
+          commit-message: "chore: regenerate SDK from latest OpenAPI spec (${{ env.TAG_TIMESTAMP }})"
           reviewers: weirdion
           delete-branch: true
