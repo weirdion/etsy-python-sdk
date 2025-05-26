@@ -8,7 +8,6 @@ on:
 permissions:
   contents: write  # Allow writing to the repository for tagging
   pull-requests: write  # Allow writing to pull requests for tagging
-  metadata: read  # Allow reading metadata for the repository
 
 jobs:
   tag-generate-sdk:
